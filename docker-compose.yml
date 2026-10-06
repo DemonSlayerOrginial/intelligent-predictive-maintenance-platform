@@ -1,0 +1,132 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.7.1
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,CONTROLLER://0.0.0.0:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:29093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qk
+    healthcheck:
+      test: ["CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: pmp
+      POSTGRES_PASSWORD: pmp
+      POSTGRES_DB: pmp
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pmp -d pmp"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  inference:
+    build: .
+    command: uvicorn services.inference.app:app --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./models:/app/models:ro
+
+  simulator:
+    build: .
+    command: python -m services.simulator.app
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SIMULATOR_MACHINES: 50
+      SIMULATOR_EVENTS_PER_SECOND: 30
+
+  stream-processor:
+    build: .
+    command: python -m services.stream_processor.app
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      INFERENCE_URL: http://inference:8001/predict
+      METRICS_PORT: 9102
+    ports:
+      - "9102:9102"
+
+  persistence:
+    build: .
+    command: python -m services.persistence.app
+    environment:
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      DATABASE_URL: postgresql://pmp:pmp@postgres:5432/pmp
+      REDIS_URL: redis://redis:6379/0
+
+  backend:
+    build: .
+    command: uvicorn services.backend.app:app --host 0.0.0.0 --port 8000
+    environment:
+      DATABASE_URL: postgresql://pmp:pmp@postgres:5432/pmp
+      REDIS_URL: redis://redis:6379/0
+      DASHBOARD_ORIGIN: http://localhost:3000
+    ports:
+      - "8000:8000"
+
+  drift-monitor:
+    build: .
+    command: python -m services.drift_monitor.app
+    environment:
+      DATABASE_URL: postgresql://pmp:pmp@postgres:5432/pmp
+      DRIFT_CHECK_SECONDS: 30
+      DRIFT_SAMPLE_SIZE: 1000
+      METRICS_PORT: 9105
+    volumes:
+      - ./models:/app/models:ro
+      - ./reports:/app/reports
+    ports:
+      - "9105:9105"
+
+  dashboard:
+    build: ./dashboard
+    ports:
+      - "3000:80"
+
+  prometheus:
+    image: prom/prometheus:latest
+    command: --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: grafana/grafana:latest
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    volumes:
+      - ./infra/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3001:3000"
+
+volumes:
+  postgres_data:
