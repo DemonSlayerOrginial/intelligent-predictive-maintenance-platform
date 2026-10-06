@@ -1,2 +1,3 @@
-# intelligent-predictive-maintenance-platform
-A platform for intelligent predictive maintenance using machine learning and data analytics
+# Intelligent Predictive Maintenance Platform
+
+End-to-end ML engineering project for real-time equipment failure prediction, anomaly detection, and remaining useful life estimation.
