@@ -3,7 +3,8 @@ __pycache__/
 .venv/
 .env
 .pytest_cache/
-data/**/*.csv
+data/raw/*.csv
+data/processed/*.csv
 models/**/*.joblib
 node_modules/
 dashboard/dist/
@@ -11,3 +12,7 @@ mlruns/
 reports/drift/*.json
 reports/retrain_request.json
 models/candidates/
+
+# Generated datasets / model artifacts are reproducible and intentionally not committed
+data/**/*.csv
+models/**/*.joblib
