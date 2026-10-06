@@ -1,0 +1,11 @@
+{
+  "train_rows": 34410,
+  "test_rows": 8610,
+  "positive_rate_train": 0.05777390293519326,
+  "positive_rate_test": 0.04367015098722416,
+  "roc_auc": 0.8221429761910914,
+  "pr_auc": 0.18264786248420983,
+  "confusion_matrix": [[8086, 148], [323, 53]],
+  "threshold": 0.5,
+  "time_split_cutoff": "2026-02-18 01:00:00"
+}
