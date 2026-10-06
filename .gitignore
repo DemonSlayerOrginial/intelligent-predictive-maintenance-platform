@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+.pytest_cache/
+data/**/*.csv
+models/**/*.joblib
+node_modules/
+dashboard/dist/
+mlruns/
+reports/drift/*.json
+reports/retrain_request.json
+models/candidates/
