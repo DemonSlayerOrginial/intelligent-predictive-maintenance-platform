@@ -1,0 +1,40 @@
+{
+  "failure": {
+    "roc_auc": 0.7143242223300448,
+    "pr_auc": 0.08192151739298935,
+    "precision": 0.08859470468431772,
+    "recall": 0.29292929292929293,
+    "f1": 0.13604378420641125,
+    "f2": 0.20046082949308755,
+    "recall_at_precision_80": 0.0,
+    "confusion_matrix": [[5288, 895], [210, 87]],
+    "threshold": 0.4078964684853752,
+    "train_rows": 30090,
+    "validation_rows": 6450,
+    "test_rows": 6480,
+    "threshold_policy": "maximize validation F2 (beta=2)"
+  },
+  "anomaly": {
+    "score_median": -0.09462247420548575,
+    "score_iqr": 0.04425612934349947,
+    "healthy_rows": 30000
+  },
+  "rul": {
+    "mae_hours": 61.125231789960154,
+    "train_rows": 28527,
+    "test_rows": 7150,
+    "max_rul_hours": 720
+  },
+  "feature_columns": [
+    "temperature", "vibration", "pressure", "rpm", "voltage", "load",
+    "error_count", "hours_since_maintenance",
+    "temperature_mean_6h", "temperature_std_24h", "temperature_delta_6h",
+    "vibration_mean_6h", "vibration_std_24h", "vibration_delta_6h",
+    "pressure_mean_6h", "pressure_std_24h", "pressure_delta_6h",
+    "rpm_mean_6h", "rpm_std_24h", "rpm_delta_6h",
+    "voltage_mean_6h", "voltage_std_24h", "voltage_delta_6h",
+    "load_mean_6h", "load_std_24h", "load_delta_6h",
+    "errors_24h", "errors_6h"
+  ],
+  "registry_version": "20260928T213822Z"
+}
