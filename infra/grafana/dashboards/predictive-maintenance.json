@@ -1,0 +1,43 @@
+{
+  "annotations": {"list": []},
+  "editable": true,
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Inference Requests",
+      "targets": [{"expr": "sum(rate(inference_requests_total[1m]))", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 8, "x": 0, "y": 0}
+    },
+    {
+      "type": "stat",
+      "title": "Critical Predictions / min",
+      "targets": [{"expr": "sum(rate(inference_risk_predictions_total{risk_level=\"critical\"}[1m])) * 60", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 8, "x": 8, "y": 0}
+    },
+    {
+      "type": "stat",
+      "title": "Drifted Feature Fraction",
+      "targets": [{"expr": "model_feature_drift_fraction", "refId": "A"}],
+      "gridPos": {"h": 8, "w": 8, "x": 16, "y": 0}
+    },
+    {
+      "type": "timeseries",
+      "title": "Inference p95 Latency",
+      "targets": [{"expr": "histogram_quantile(0.95, sum(rate(inference_latency_seconds_bucket[5m])) by (le))", "refId": "A"}],
+      "gridPos": {"h": 9, "w": 12, "x": 0, "y": 8}
+    },
+    {
+      "type": "timeseries",
+      "title": "Stream Processing Errors",
+      "targets": [{"expr": "sum by (stage) (rate(stream_processing_errors_total[5m]))", "refId": "A"}],
+      "gridPos": {"h": 9, "w": 12, "x": 12, "y": 8}
+    }
+  ],
+  "schemaVersion": 39,
+  "tags": ["mlops", "predictive-maintenance"],
+  "templating": {"list": []},
+  "time": {"from": "now-1h", "to": "now"},
+  "title": "Predictive Maintenance Platform",
+  "uid": "pmp-overview",
+  "version": 1
+}
