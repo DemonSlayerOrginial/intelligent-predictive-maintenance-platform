@@ -1,0 +1,33 @@
+{
+  "machine_id": "M029",
+  "features": {
+    "temperature": 71.003,
+    "vibration": 3.959,
+    "pressure": 44.111,
+    "rpm": 1962.59,
+    "voltage": 230.498,
+    "load": 0.5203,
+    "error_count": 0.0,
+    "hours_since_maintenance": 152.0,
+    "temperature_mean_6h": 70.64399999999999,
+    "temperature_std_24h": 2.403791268383144,
+    "temperature_delta_6h": 5.266999999999996,
+    "vibration_mean_6h": 3.577166666666667,
+    "vibration_std_24h": 0.5231324478284558,
+    "vibration_delta_6h": 1.092,
+    "pressure_mean_6h": 45.0795,
+    "pressure_std_24h": 1.0334776865628033,
+    "pressure_delta_6h": -0.5590000000000046,
+    "rpm_mean_6h": 2008.548,
+    "rpm_std_24h": 234.25013836018945,
+    "rpm_delta_6h": 372.874,
+    "voltage_mean_6h": 228.78266666666664,
+    "voltage_std_24h": 1.6405328203917724,
+    "voltage_delta_6h": 0.8849999999999909,
+    "load_mean_6h": 0.5055000000000001,
+    "load_std_24h": 0.1896094611395307,
+    "load_delta_6h": 0.3124,
+    "errors_24h": 8.0,
+    "errors_6h": 3.0
+  }
+}
